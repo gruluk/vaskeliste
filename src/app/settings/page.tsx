@@ -40,6 +40,17 @@ export default function SettingsPage() {
           </Link>
         </div>
       </main>
+      <footer className="text-center text-sm text-gray-500 py-6">
+        Laget av <span className="font-medium">Luka Grujic</span> •{' '}
+        <a
+          href="https://github.com/gruluk/vaskeliste"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+        >
+          GitHub-repo
+        </a>
+      </footer>
     </div>
   );
 }

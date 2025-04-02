@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧼 Vaskeliste
 
-## Getting Started
+**Vaskeliste** er et privat system for vaskeliste og oppgavehåndtering laget kun for vårt kollektiv.  
+Det hjelper oss med å holde oversikt over ukentlige ansvarsområder som vasking av kjøkken og bad, uten å måtte mase i gruppechatten 😄
 
-First, run the development server:
+Prosjektet er laget for moro skyld, for å lære og for å gjøre hverdagen i kollektivet litt enklere.  
+Dette prosjektet er ikke ment for bruk av andre kollektiv.
 
-```bash
+Laget av [Luka Grujic](https://github.com/gruluk).
+
+---
+
+## 🚀 Kom i gang
+
+Installer først alle avhengigheter:
+
+npm install
+
+Start deretter utviklingsserveren:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Åpne http://localhost:3000 i nettleseren for å bruke appen.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🧠 Hva appen gjør
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 🧽 Ukesoppgaver: Automatisk rotasjon av hvem som har ansvar for kjøkken og bad
 
-## Learn More
+- ✅ Statuslogg: Marker oppgaver som "gjort", "skal gjøres" eller "ikke gjort"
 
-To learn more about Next.js, take a look at the following resources:
+- 🗓️ Ferieuker: Hopp over uker som for eksempel påsken eller sommerferien
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 👥 Brukere: Legg til og administrer beboerne
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 📊 Statistikk: Se hvor mange ganger hver person har gjort ulike oppgaver
 
-## Deploy on Vercel
+- ✏️ Tilpassede oppgaver: Lag egne oppgaver og hold oversikt over hvem som har gjort hva
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠 Teknologi brukt
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Rammeverk: Next.js
+
+- Backend: Supabase
+
+- Stilark: Tailwind CSS
+
+- Hosting: Vercel
