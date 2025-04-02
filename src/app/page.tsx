@@ -1,103 +1,123 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import TaskList from '@/components/TaskList';
+import AddTaskModal from '@/components/AddTaskModal';
+import WeeklyResponsibility from '@/components/WeeklyResponsibility';
+import PurchaseOverview from '@/components/PurchaseOverview';
+import NavBar from '@/components/NavBar';
+
+type User = { id: string; name: string };
+type Task = { id: string; name: string };
+type Tally = { user_id: string; task_id: string; count: number };
+type TaskLastDone = { task_id: string; last_done: string };
+
+export default function HomePage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tallies, setTallies] = useState<Tally[]>([]);
+  const [taskLastDone, setTaskLastDone] = useState<TaskLastDone[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedTask, setSelectedTask] = useState('');
+  const [activeTab, setActiveTab] = useState<'tally' | 'weekly' | 'purchases'>('tally');
+
+  useEffect(() => {
+    async function fetchData() {
+      const { data: users } = await supabase.from('users').select('*');
+      const { data: tasks } = await supabase.from('tasks').select('*');
+      const { data: tallies } = await supabase.from('task_tallies').select('*');
+      const { data: lastDone } = await supabase.from('task_last_done').select('*');
+      setUsers(users || []);
+      setTasks(tasks || []);
+      setTallies(tallies || []);
+      setTaskLastDone(lastDone || []);
+    }
+
+    fetchData();
+  }, []);
+
+  async function handleAdd(userId: string, taskId: string) {
+    await supabase.from('task_logs').insert({ user_id: userId, task_id: taskId });
+
+    const { data: newTallies } = await supabase.from('task_tallies').select('*');
+    const { data: newLastDone } = await supabase.from('task_last_done').select('*');
+    setTallies(newTallies || []);
+    setTaskLastDone(newLastDone || []);
+  }
+
+  async function handleSubmit() {
+    if (selectedUser && selectedTask) {
+      await handleAdd(selectedUser, selectedTask);
+      setSelectedUser('');
+      setSelectedTask('');
+      setShowModal(false);
+    }
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="bg-white min-h-screen">
+        <NavBar />
+        <main className="p-6 max-w-3xl mx-auto relative">
+        {/* Tabs */}
+        <div className="mb-6 flex gap-4">
+            <button
+            onClick={() => setActiveTab('tally')}
+            className={`px-4 py-2 rounded ${activeTab === 'tally' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-white'}`}
+            >
+            Telling
+            </button>
+            <button
+            onClick={() => setActiveTab('weekly')}
+            className={`px-4 py-2 rounded ${activeTab === 'weekly' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-white'}`}
+            >
+            Ukesansvar
+            </button>
+            <button
+            onClick={() => setActiveTab('purchases')}
+            className={`px-4 py-2 rounded ${activeTab === 'purchases' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-white'}`}
+            >
+            Innkjøp
+            </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Content */}
+        {activeTab === 'tally' && (
+            <>
+            <TaskList
+                users={users}
+                tasks={tasks}
+                tallies={tallies}
+                taskLastDone={taskLastDone}
+            />
+
+            {/* Floating + button */}
+            <button
+                onClick={() => setShowModal(true)}
+                className="fixed bottom-6 right-6 bg-blue-600 text-white w-14 h-14 rounded-full text-3xl shadow-lg hover:bg-blue-700"
+            >
+                +
+            </button>
+
+            {showModal && (
+                <AddTaskModal
+                users={users}
+                tasks={tasks}
+                selectedUser={selectedUser}
+                selectedTask={selectedTask}
+                onUserChange={setSelectedUser}
+                onTaskChange={setSelectedTask}
+                onClose={() => setShowModal(false)}
+                onSubmit={handleSubmit}
+                />
+            )}
+            </>
+        )}
+
+        {activeTab === 'weekly' && <WeeklyResponsibility />}
+        {activeTab === 'purchases' && <PurchaseOverview />}
+        </main>
     </div>
   );
 }
